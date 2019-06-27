@@ -8,7 +8,7 @@ from matplotlib import pyplot as plt
 
 
 # Generate the test sizes
-TEST_SIZES = [204 * (x + 1) for x in range(10)]
+TEST_SIZES = [100 * (x + 1) for x in range(10)]
 LABELS = ['Random Replacement', 'EigenRemove, Rank=Full', 'EigenRemove, Rank=3/4',
           'EigenRemove, Rank=1/2', 'EigenRemove, Rank=1/4', 'EigenRemove, Rank=1/8',
           'Minimum Weight Selection']
@@ -16,14 +16,20 @@ LABELS = ['Random Replacement', 'EigenRemove, Rank=Full', 'EigenRemove, Rank=3/4
 
 def plot_compression_results(random, run_se, run_tf, run_half, run_fourth, run_eight, min_weight, plt):
     diffs = [SIZE - d for d in TEST_SIZES[::-1]]
-    plt.title.set_text('Mean Difference for EigenRemove')
+    plt.title.set_text('Mean of Norm Difference for EigenRemove')
     l1 = plt.plot(diffs, random[::-1], label='Random Replacement')[0]
-    l2 = plt.plot(diffs, run_se[::-1], label='EigenRemove, Rank=Full')[0]
-    l3 = plt.plot(diffs, run_tf[::-1], label='EigenRemove, Rank=3/4')[0]
-    l4 = plt.plot(diffs, run_half[::-1], label='EigenRemove, Rank=1/2')[0]
-    l5 = plt.plot(diffs, run_fourth[::-1], label='EigenRemove, Rank=1/4')[0]
-    l6 = plt.plot(diffs, run_eight[::-1], label='EigenRemove, Rank=1/8')[0]
-    l7 = plt.plot(diffs, min_weight[::-1], label='Minimum Weight Selection')[0]
+    l2 = plt.plot(diffs, run_se[::-1], 'C2-o',
+                  label='EigenRemove, Rank=Full')[0]
+    l3 = plt.plot(diffs, run_tf[::-1], color="darkgoldenrod",
+                  linestyle='dashed', marker='o', label='EigenRemove, Rank=3/4')[0]
+    l4 = plt.plot(diffs, run_half[::-1], color='hotpink',
+                  linestyle='dashed', marker='^', label='EigenRemove, Rank=1/2')[0]
+    l5 = plt.plot(diffs, run_fourth[::-1],
+                  color='cadetblue', marker='o', label='EigenRemove, Rank=1/4')[0]
+    l6 = plt.plot(diffs, run_eight[::-1],
+                  color='green', marker='^', label='EigenRemove, Rank=1/8')[0]
+    l7 = plt.plot(diffs, min_weight[::-1], linestyle='dashed',
+                  color='red', marker='o', label='Minimum Weight Selection')[0]
     # plt.plot([d for d in diffs][::-1], rand_select, label="Minimum Weight")
     plt.set_xlabel('Neuron Delta')
     plt.set_ylabel('Norm of Difference in Activation')
@@ -32,14 +38,20 @@ def plot_compression_results(random, run_se, run_tf, run_half, run_fourth, run_e
 
 def plot_compression_results_var(random, run_se, run_tf, run_half, run_fourth, run_eight, min_weight, plt):
     diffs = [SIZE - d for d in TEST_SIZES[::-1]]
-    plt.title.set_text('Variantional Difference for EigenRemove')
+    plt.title.set_text('Variance of Norm Difference for EigenRemove')
     l1 = plt.plot(diffs, random[::-1], label='Random Replacement')[0]
-    l2 = plt.plot(diffs, run_se[::-1], label='EigenRemove, Rank=Full')[0]
-    l3 = plt.plot(diffs, run_tf[::-1], label='EigenRemove, Rank=3/4')[0]
-    l4 = plt.plot(diffs, run_half[::-1], label='EigenRemove, Rank=1/2')[0]
-    l5 = plt.plot(diffs, run_fourth[::-1], label='EigenRemove, Rank=1/4')[0]
-    l6 = plt.plot(diffs, run_eight[::-1], label='EigenRemove, Rank=1/8')[0]
-    l7 = plt.plot(diffs, min_weight[::-1], label='Minimum Weight Selection')[0]
+    l2 = plt.plot(diffs, run_se[::-1], 'C2-o',
+                  label='EigenRemove, Rank=Full')[0]
+    l3 = plt.plot(diffs, run_tf[::-1], color="darkgoldenrod",
+                  linestyle='dashed', marker='o', label='EigenRemove, Rank=3/4')[0]
+    l4 = plt.plot(diffs, run_half[::-1], color='hotpink',
+                  linestyle='dashed', marker='^', label='EigenRemove, Rank=1/2')[0]
+    l5 = plt.plot(diffs, run_fourth[::-1],
+                  color='cadetblue', marker='o', label='EigenRemove, Rank=1/4')[0]
+    l6 = plt.plot(diffs, run_eight[::-1],
+                  color='green', marker='^', label='EigenRemove, Rank=1/8')[0]
+    l7 = plt.plot(diffs, min_weight[::-1], linestyle='dashed',
+                  color='red', marker='o', label='Minimum Weight Selection')[0]
     # plt.plot([d for d in diffs][::-1], rand_select, label="Minimum Weight")
     plt.set_xlabel('Neuron Delta')
     plt.set_ylabel('Norm of Difference in Activation')

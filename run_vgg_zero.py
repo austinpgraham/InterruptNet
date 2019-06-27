@@ -1,6 +1,7 @@
 from pdb import set_trace
 import copy
 import json
+import time
 import torch
 
 from random import shuffle
@@ -39,9 +40,12 @@ def do_one_iter(train_loader, test_loader, size_ratio):
     # Track total losses
     total_losses = []
     spectral_norms = []
-    obj_rations = {'losses': {}, 'final_acc': None}
+    obj_rations = {'losses': {}, 'final_acc': None,
+                   'tot_time': 0, 'epoch_time': [], 'op_time': []}
+    tot_start = time.time()
     for epoch in range(TOTAL_EPOCHS):
         if epoch % 2 == 1:
+            op_start = time.time()
             if layers:
                 op = layers.pop()
                 _type, _int = op[0], int(op[1:])
@@ -57,15 +61,22 @@ def do_one_iter(train_loader, test_loader, size_ratio):
                         network, "fc{}".format(_int)).out_features
                     network.expand_fc_zero(
                         _int, int(curr_size + (curr_size * size_ratio)))
+            op_end = time.time()
+            obj_rations['op_time'].append(op_end - op_start)
         # Train then test at every epoch
+        epoch_start = time.time()
         train_losses, first = network.train_net(epoch, train_loader)
+        epoch_end = time.time()
+        obj_rations['epoch_time'].append(epoch_end - epoch_start)
         acc = network.test_net(test_loader)
         if epoch % 2 == 1:
             # Track the jump in loss
             if layers:
                 obj_rations[op] = first / total_losses[-1]
         total_losses.extend(train_losses)
-    obj_rations['final_acc'] = acc.item()
+    tot_end = time.time()
+    obj_rations['tot_time'] = tot_end - tot_start
+    obj_rations['final_acc'] = acc
     return obj_rations
 
 

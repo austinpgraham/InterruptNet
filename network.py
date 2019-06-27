@@ -8,6 +8,7 @@ tensorly.set_backend('pytorch')
 
 ITERATIONS = 10
 SIZE = 2048
+TEST_INPUT_SIZE = 1000
 
 
 class TestNetwork(torch.nn.Module):
@@ -171,7 +172,8 @@ class TestNetwork(torch.nn.Module):
             # collect the output, do compression with new_size,
             # run again, measure results.
             test_nn = TestNetwork()
-            test_inputs = torch.FloatTensor(SIZE, SIZE).uniform_(0, 1).cuda()
+            test_inputs = torch.FloatTensor(
+                TEST_INPUT_SIZE, SIZE).uniform_(0, 1).cuda()
             orig_output = test_nn(test_inputs)
             # Do the targeted operation
             _func_exec = getattr(test_nn, _func)

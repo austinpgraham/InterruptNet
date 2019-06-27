@@ -8,16 +8,19 @@ from matplotlib import pyplot as plt
 
 
 # Generate the test sizes
-TEST_SIZES = [204 * (x + 1) + SIZE for x in range(10)]
+TEST_SIZES = [100 * (x + 1) + SIZE for x in range(10)]
 LABELS = ['Random Replacement', 'Zero Replacement', 'WeakExpand']
 
 
 def plot_expand_results(random, ez, we, plt):
     diffs = [d - SIZE for d in TEST_SIZES[::-1]]
     plt.title.set_text('Mean Difference for WeakExpand')
-    l1 = plt.plot(diffs, random[::-1], label='Random Replacement')[0]
-    l2 = plt.plot(diffs, ez[::-1], label='Zero Replacement')[0]
-    l3 = plt.plot(diffs, we[::-1], label='WeakExpand')[0]
+    l1 = plt.plot(diffs, random[::-1], linestyle="dashed",
+                  color="red", marker="o", label='Random Replacement')[0]
+    l2 = plt.plot(diffs, ez[::-1], linestyle="dashed",
+                  color="blue", marker="^", label='Zero Replacement')[0]
+    l3 = plt.plot(diffs, we[::-1], linestyle="dashed",
+                  color="green", marker="o", label='WeakExpand')[0]
     # plt.plot([d for d in diffs][::-1], rand_select, label="Minimum Weight")
     plt.set_xlabel('Neuron Delta')
     plt.set_ylabel('Norm of Difference in Activation')
@@ -27,9 +30,12 @@ def plot_expand_results(random, ez, we, plt):
 def plot_expand_results_var(random, ez, we, plt):
     diffs = [d - SIZE for d in TEST_SIZES[::-1]]
     plt.title.set_text('Variational Difference for WeakExpand')
-    l1 = plt.plot(diffs, random[::-1], label='Random Replacement')[0]
-    l2 = plt.plot(diffs, ez[::-1], label='Zero Replacement')[0]
-    l3 = plt.plot(diffs, we[::-1], label='WeakExpand')[0]
+    l1 = plt.plot(diffs, random[::-1], linestyle="dashed",
+                  color="red", marker="o", label='Random Replacement')[0]
+    l2 = plt.plot(diffs, ez[::-1], linestyle="dashed",
+                  color="blue", marker="^", label='Zero Replacement')[0]
+    l3 = plt.plot(diffs, we[::-1], linestyle="dashed",
+                  color="green", marker="o", label='WeakExpand')[0]
     # plt.plot([d for d in diffs][::-1], rand_select, label="Minimum Weight")
     plt.set_xlabel('Neuron Delta')
     plt.set_ylabel('Norm of Difference in Activation')

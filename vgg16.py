@@ -505,4 +505,4 @@ class VGG16(nn.Module):
         print('\nTest set: Avg. loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)\n'.format(
             test_loss, correct, len(test_loader.dataset),
             100. * correct / len(test_loader.dataset)))
-        return 100. * correct / len(test_loader.dataset)
+        return 100. * float(correct) / len(test_loader.dataset)
