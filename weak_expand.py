@@ -1,5 +1,8 @@
+import math
 import torch
 import tensorly
+
+from scipy import stats
 
 from network import SIZE
 from network import TestNetwork
@@ -15,12 +18,12 @@ LABELS = ['Random Replacement', 'Zero Replacement', 'WeakExpand']
 def plot_expand_results(random, ez, we, plt):
     diffs = [d - SIZE for d in TEST_SIZES[::-1]]
     plt.title.set_text('Mean Difference for WeakExpand')
-    l1 = plt.plot(diffs, random[::-1], linestyle="dashed",
-                  color="red", marker="o", label='Random Replacement')[0]
-    l2 = plt.plot(diffs, ez[::-1], linestyle="dashed",
-                  color="blue", marker="^", label='Zero Replacement')[0]
-    l3 = plt.plot(diffs, we[::-1], linestyle="dashed",
-                  color="green", marker="o", label='WeakExpand')[0]
+    l1 = plt.errorbar(diffs, random[0][::-1], yerr=[math.sqrt(x) for x in random[1][::-1]], linestyle="dashed",
+                      color="red", marker="o", label='Random Replacement')[0]
+    l2 = plt.errorbar(diffs, ez[0][::-1], yerr=[math.sqrt(x) for x in ez[1][::-1]], linestyle="dashed",
+                      color="blue", marker="^", label='Zero Replacement')[0]
+    l3 = plt.errorbar(diffs, we[0][::-1], yerr=[math.sqrt(x) for x in we[1][::-1]], linestyle="dashed",
+                      color="green", marker="o", label='WeakExpand')[0]
     # plt.plot([d for d in diffs][::-1], rand_select, label="Minimum Weight")
     plt.set_xlabel('Neuron Delta')
     plt.set_ylabel('Norm of Difference in Activation')
@@ -89,11 +92,16 @@ def main():
             ezero.append(ez)
             ezero_var.append(ez_var)
 
+    # TTest
+    _, p = stats.ttest_ind(we_mean, ez)
+    print('P value: ', p)
+
     print(TEST_SIZES)
-    fig, (ax1, ax2) = plt.subplots(1, 2)
-    lines1 = plot_expand_results(random, ezero, wexpand, ax1)
-    lines2 = plot_expand_results_var(random_var, ezero_var, wexpand_var, ax2)
-    fig.legend(lines1 + lines2, labels=LABELS)
+    fig, ax1 = plt.subplots(1, 1)
+    lines1 = plot_expand_results(
+        (random, random_var), (ezero, ezero_var), (wexpand, wexpand_var), ax1)
+    # lines2 = plot_expand_results_var(random_var, ezero_var, wexpand_var, ax2)
+    fig.legend(lines1, labels=LABELS)
     plt.show()
 
 

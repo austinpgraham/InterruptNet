@@ -1,5 +1,8 @@
+import math
 import torch
 import tensorly
+
+from scipy import stats
 
 from network import SIZE
 from network import TestNetwork
@@ -17,19 +20,20 @@ LABELS = ['Random Replacement', 'EigenRemove, Rank=Full', 'EigenRemove, Rank=3/4
 def plot_compression_results(random, run_se, run_tf, run_half, run_fourth, run_eight, min_weight, plt):
     diffs = [SIZE - d for d in TEST_SIZES[::-1]]
     plt.title.set_text('Mean of Norm Difference for EigenRemove')
-    l1 = plt.plot(diffs, random[::-1], label='Random Replacement')[0]
-    l2 = plt.plot(diffs, run_se[::-1], 'C2-o',
-                  label='EigenRemove, Rank=Full')[0]
-    l3 = plt.plot(diffs, run_tf[::-1], color="darkgoldenrod",
-                  linestyle='dashed', marker='o', label='EigenRemove, Rank=3/4')[0]
-    l4 = plt.plot(diffs, run_half[::-1], color='hotpink',
-                  linestyle='dashed', marker='^', label='EigenRemove, Rank=1/2')[0]
-    l5 = plt.plot(diffs, run_fourth[::-1],
-                  color='cadetblue', marker='o', label='EigenRemove, Rank=1/4')[0]
-    l6 = plt.plot(diffs, run_eight[::-1],
-                  color='green', marker='^', label='EigenRemove, Rank=1/8')[0]
-    l7 = plt.plot(diffs, min_weight[::-1], linestyle='dashed',
-                  color='red', marker='o', label='Minimum Weight Selection')[0]
+    l1 = plt.errorbar(diffs, random[0][::-1], yerr=[math.sqrt(x)
+                                                    for x in random[1][::-1]], label='Random Replacement')[0]
+    l2 = plt.errorbar(diffs, run_se[0][::-1], yerr=[math.sqrt(x) for x in run_se[1][::-1]], marker='o',
+                      label='EigenRemove, Rank=Full')[0]
+    l3 = plt.errorbar(diffs, run_tf[0][::-1], yerr=[math.sqrt(x) for x in run_tf[1][::-1]], color="darkgoldenrod",
+                      linestyle='dashed', marker='o', label='EigenRemove, Rank=3/4')[0]
+    l4 = plt.errorbar(diffs, run_half[0][::-1], yerr=[math.sqrt(x) for x in run_half[1][::-1]], color='hotpink',
+                      linestyle='dashed', marker='^', label='EigenRemove, Rank=1/2')[0]
+    l5 = plt.errorbar(diffs, run_fourth[0][::-1], yerr=[math.sqrt(x) for x in run_fourth[1][::-1]],
+                      color='cadetblue', marker='o', label='EigenRemove, Rank=1/4')[0]
+    l6 = plt.errorbar(diffs, run_eight[0][::-1], yerr=[math.sqrt(x) for x in run_eight[1][::-1]],
+                      color='green', marker='^', label='EigenRemove, Rank=1/8')[0]
+    l7 = plt.errorbar(diffs, min_weight[0][::-1], linestyle='dashed', yerr=[math.sqrt(x) for x in min_weight[1][::-1]],
+                      color='red', marker='o', label='Minimum Weight Selection')[0]
     # plt.plot([d for d in diffs][::-1], rand_select, label="Minimum Weight")
     plt.set_xlabel('Neuron Delta')
     plt.set_ylabel('Norm of Difference in Activation')
@@ -137,13 +141,17 @@ def main():
             mw_mean, mw_var = TestNetwork.run_min_weight(size)
             min_weight.append(mw_mean)
             min_weight_var.append(mw_var)
+
+    print(stats.ttest_ind(min_weight, run_seven_eights)[1])
+    print(stats.ttest_ind(min_weight, run_eigth)[1])
+
     print(TEST_SIZES)
-    fig, (ax1, ax2) = plt.subplots(1, 2)
+    fig, ax1 = plt.subplots(1, 1)
     lines1 = plot_compression_results(
-        random, run_seven_eights, run_three_fourths, run_half, run_fourth, run_eigth, min_weight, ax1)
-    lines2 = plot_compression_results_var(
-        random_var, run_full_var, run_tf_var, run_half_var, run_fourth_var, run_eigth_var, min_weight_var, ax2)
-    fig.legend(lines1 + lines2, labels=LABELS)
+        (random, random_var), (run_seven_eights, run_full_var), (run_three_fourths, run_tf_var), (run_half, run_half_var), (run_fourth, run_fourth_var), (run_eigth, run_eigth_var), (min_weight, min_weight_var), ax1)
+    # lines2 = plot_compression_results_var(
+    #     random_var, run_full_var, run_tf_var, run_half_var, run_fourth_var, run_eigth_var, min_weight_var, ax2)
+    fig.legend(lines1, labels=LABELS)
     plt.show()
 
 
