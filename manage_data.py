@@ -4,21 +4,24 @@ import json
 
 from statistics import mean
 from statistics import median
+from statistics import stdev
 from statistics import variance
 
 import matplotlib.pyplot as plt
 
 
 def epochvsoptimes(results):
+    # yerr=[stdev(val['epoch_time']) for key, val in results.items()][::-1]
+    # yerr=[stdev(val['op_time']) for key, val in results.items()][::-1]
     xs = ['0.75', '0.667', '0.5', '0.333', '0.25'][::-1]
-    plt.title('Op and Epoch Times at Various Changes')
-    plt.plot(xs, [mean(val['epoch_time'])
-                  for key, val in results.items()][::-1], label="Epoch Time")
-    plt.plot(xs, [mean(val['op_time'])
-                  for key, val in results.items()][::-1], label="Op Time")
+    plt.errorbar(xs, [mean(val['epoch_time'])
+                  for key, val in results.items()][::-1], label="Epoch Time", linestyle="dashed", marker="^", color="red", capsize=5)
+    plt.errorbar(xs, [mean(val['op_time'])
+                  for key, val in results.items()][::-1], label="Op Time", linestyle="dashed", marker="o", color="blue", capsize=5)
     plt.legend()
     plt.xlabel('Neuron Delta')
     plt.ylabel('Total Time (ms)')
+    plt.title('Op and Epoch Times at Various Changes')
     plt.show()
 
 
