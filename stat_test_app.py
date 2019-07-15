@@ -3,6 +3,7 @@ import sys
 import json
 
 from statistics import mean
+from statistics import stdev
 from statistics import median
 
 import matplotlib.pyplot as plt
@@ -28,14 +29,14 @@ def get_losses(data):
 
 
 def plot_losses(results1, results2):
-    plt.title('Final Training Accuracy for WeakExpand and Zero Weight Replacement')
+    plt.title('Final Training Accuracy for EigenRemove and Minimum Weight Selection')
     xs = [float(x) for x in results1.keys()]
-    plt.plot(xs, [median(results1[x]['acc'])
-                  for x in results1], label="WeakExpand")
-    plt.plot(xs, [median(results2[x]['acc'])
-                  for x in results2], label="Zero Weight Replacement")
-    plt.ylabel('Final Accuracy')
-    plt.xlabel('% Information Kept')
+    plt.errorbar(xs, [median(results1[x]['acc'])
+                      for x in results1], yerr=[stdev(val['acc']) for key, val in results1.items()], label="EigenRemove", linestyle="dashed", marker="^", color="red", capsize=5)
+    plt.errorbar(xs, [median(results2[x]['acc'])
+                      for x in results2], yerr=[stdev(val['acc']) for key, val in results2.items()], label="Minimum Weight Selection", linestyle="dashed", marker="o", color="blue", capsize=5)
+    plt.ylabel('Final Accuracy (%)')
+    plt.xlabel('Neuron Delta')
     plt.legend()
     plt.show()
 
