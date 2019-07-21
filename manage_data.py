@@ -14,14 +14,18 @@ def epochvsoptimes(results):
     # yerr=[stdev(val['epoch_time']) for key, val in results.items()][::-1]
     # yerr=[stdev(val['op_time']) for key, val in results.items()][::-1]
     xs = ['0.75', '0.667', '0.5', '0.333', '0.25'][::-1]
-    plt.errorbar(xs, [mean(val['epoch_time'])
-                      for key, val in results.items()][::-1], yerr=[stdev(val['epoch_time']) for key, val in results.items()][::-1], label="Epoch Time", linestyle="dashed", marker="^", color="red", capsize=5)
-    plt.errorbar(xs, [mean(val['op_time'])
-                      for key, val in results.items()][::-1], yerr=[stdev(val['op_time']) for key, val in results.items()][::-1], label="Op Time", linestyle="dashed", marker="o", color="blue", capsize=5)
+    plt.plot(xs, [mean(val['epoch_time'])
+                  for key, val in results.items()][::-1], label="Epoch Time", linestyle="dashed", marker="^", color="red")
+    plt.plot(xs, [mean(val['op_time'])
+                  for key, val in results.items()][::-1], label="Op Time", linestyle="dashed", marker="o", color="blue")
+    plt.fill_between(xs, [mean(val['op_time']) - stdev(val['op_time']) for key, val in results.items()]
+                     [::-1], [mean(val['op_time']) + stdev(val['op_time']) for key, val in results.items()][::-1], alpha=0.3, facecolor="blue")
+    plt.fill_between(xs, [mean(val['epoch_time']) - stdev(val['epoch_time']) for key, val in results.items()]
+                     [::-1], [mean(val['epoch_time']) + stdev(val['epoch_time']) for key, val in results.items()][::-1], alpha=0.3, facecolor="red")
     plt.legend()
     plt.xlabel('Neuron Delta')
     plt.ylabel('Total Time (ms)')
-    plt.title('Final Training Accuracy for EigenRemove and Minimum Weight Selection')
+    plt.title('WeakExpand Op and Epoch Times at Various Changes')
     plt.show()
 
 

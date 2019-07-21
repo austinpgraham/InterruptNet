@@ -29,13 +29,19 @@ def get_losses(data):
 
 
 def plot_losses(results1, results2):
-    plt.title('Final Training Accuracy for EigenRemove and Minimum Weight Selection')
+    plt.title('Median Loss Increase for WeakExpand and Zero Weight Expansion')
     xs = [float(x) for x in results1.keys()]
-    plt.errorbar(xs, [median(results1[x]['acc'])
-                      for x in results1], yerr=[stdev(val['acc']) for key, val in results1.items()], label="EigenRemove", linestyle="dashed", marker="^", color="red", capsize=5)
-    plt.errorbar(xs, [median(results2[x]['acc'])
-                      for x in results2], yerr=[stdev(val['acc']) for key, val in results2.items()], label="Minimum Weight Selection", linestyle="dashed", marker="o", color="blue", capsize=5)
-    plt.ylabel('Final Accuracy (%)')
+    plt.plot(xs, [median(results1[x]['losses'])
+                  for x in results1], label="WeakExpand", linestyle="dashed", marker="^", color="red")
+    plt.plot(xs, [median(results2[x]['losses'])
+                  for x in results2], label="Zero Weight Expansion", linestyle="dashed", marker="o", color="blue")
+    plt.fill_between(xs, [median(results1[key]['losses']) - stdev(val['losses'])
+                          for key, val in results1.items()], [median(results1[key]['losses']) + stdev(val['losses'])
+                                                              for key, val in results1.items()], facecolor="red", alpha=0.3)
+    plt.fill_between(xs, [median(results2[key]['losses']) - stdev(val['losses'])
+                          for key, val in results2.items()], [median(results2[key]['losses']) + stdev(val['losses'])
+                                                              for key, val in results2.items()], facecolor="blue", alpha=0.3)
+    plt.ylabel('Median Loss')
     plt.xlabel('Neuron Delta')
     plt.legend()
     plt.show()
